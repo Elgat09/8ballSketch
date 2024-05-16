@@ -62,10 +62,10 @@ public class GameSetUp : MonoBehaviour
         GameObject ball = Instantiate(ballPrefab, position, Quaternion.identity);
         ball.GetComponent<Ball>().MakeEightBall();
     }
+
     void PlaceRandomBalls()
     {
         int numInThisRow = 1;
-        int rand;
         Vector3 firstInRowPosition = headballPosition.position;
         Vector3 currentPosition = firstInRowPosition;
 
@@ -83,18 +83,18 @@ public class GameSetUp : MonoBehaviour
             blueBallsRemaining--;
         }
 
-
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < numInThisRow; j++)
             {
-                if (j == 2 && j == 1)
+                
+                if (i == 2 && j == 1)
                 {
                     PlaceEightBall(currentPosition);
                 }
                 else if (redBallsRemaining > 0 && blueBallsRemaining > 0)
                 {
-                    rand = Random.Range(0, 2);
+                    int rand = Random.Range(0, 2);
                     if (rand == 0)
                     {
                         PlaceRedBall(currentPosition);
@@ -112,12 +112,13 @@ public class GameSetUp : MonoBehaviour
                 {
                     PlaceBlueBall(currentPosition);
                 }
-                currentPosition += new Vector3(1, 0, 0).normalized * ballDiameter;
+
+                currentPosition += new Vector3(ballDiameterWithBuffer, 0, 0);
             }
 
-            firstInRowPosition += Vector3.back * (Mathf.Sqrt(3) * ballRadius) + Vector3.left * ballRadius;
-                currentPosition = firstInRowPosition;
-                numInThisRow++; // Increment the number of balls for the next row
+            firstInRowPosition += new Vector3(-ballDiameterWithBuffer / 2, 0, -Mathf.Sqrt(3) * ballRadius);
+            currentPosition = firstInRowPosition;
+            numInThisRow++; 
         }
     }
 }

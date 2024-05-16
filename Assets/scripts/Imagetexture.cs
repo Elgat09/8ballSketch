@@ -1,23 +1,41 @@
 using UnityEngine;
 
-public class TextureExample : MonoBehaviour
+public class MaterialExample : MonoBehaviour
 {
-    // Reference to the material that will hold our texture
-    public Material targetMaterial;
+    // Reference to the material that will be applied
+    public Material newMaterial;
 
-    // Reference to the texture (you can assign this in the Inspector)
-    public Texture2D imageTexture;
+    // Variable to store the original material
+    private Material originalMaterial;
+
+    // Variable to store the renderer
+    private Renderer targetRenderer;
 
     void Start()
     {
-        // Make sure the target material and texture are assigned
-        if (targetMaterial == null || imageTexture == null)
+        // Get the Renderer component
+        targetRenderer = GetComponent<Renderer>();
+
+        // Make sure the renderer and new material are assigned
+        if (targetRenderer == null || newMaterial == null)
         {
-            Debug.LogError("Please assign the material and texture!");
+            Debug.LogError("Please assign the renderer and new material!");
             return;
         }
 
-        // Set the texture in the material
-        targetMaterial.mainTexture = imageTexture;
+        // Save the original material
+        originalMaterial = new Material(targetRenderer.sharedMaterial);
+
+        // Apply the new material
+        targetRenderer.sharedMaterial = newMaterial;
+    }
+
+    void OnDestroy()
+    {
+        // Restore the original material when the game stops or the object is destroyed
+        if (targetRenderer != null && originalMaterial != null)
+        {
+            targetRenderer.sharedMaterial = originalMaterial;
+        }
     }
 }

@@ -32,7 +32,7 @@ public class CameraController : MonoBehaviour
         lr = GetComponent<LineRenderer>();
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         if(cueBall != null )
@@ -48,40 +48,13 @@ public class CameraController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            DragStartPosition = Input.mousePosition;
-            
-            
-        }
-        if (Input.GetMouseButton(0))
-        {
-            
-            Vector3[] trajectory = Plot(cueBall.gameObject.GetComponent<Rigidbody>(), (Vector3)transform.position, _velocity, 500);
-            
-            lr.positionCount = trajectory.Length;
-
-            Vector3[] positions = new Vector3[trajectory.Length];
-            for(int i = 0; i < trajectory.Length; i++)
-            {
-                positions[i] = trajectory[i];
-            }
-            lr.SetPositions(positions);
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
             Vector3 hitdirection = transform.forward;
             hitdirection = new Vector3(hitdirection.x, 0, hitdirection.z).normalized;
+            cueBall.gameObject.GetComponent<Rigidbody>().AddForce(hitdirection * power, ForceMode.Impulse);
 
-            Vector3 DragEndPosition = Input.mousePosition;
-            Vector3 _velocity = (DragEndPosition - DragStartPosition) * power;
 
-            cueBall.gameObject.GetComponent<Rigidbody>().AddForce(hitdirection * _velocity.magnitude, ForceMode.Impulse);
-
-            //cueBall.gameObject.GetComponent<Rigidbody>().velocity = _velocity;
-
-            Debug.Log(_velocity);
-            Debug.Log(DragStartPosition);
-            Debug.Log(DragEndPosition);
         }
+       
     }
     public void ResetCamera()
     {
@@ -90,23 +63,6 @@ public class CameraController : MonoBehaviour
         transform.localEulerAngles = new Vector3(downAngle, transform.localEulerAngles.y, 0);
 
     }
-    public Vector3[] Plot(Rigidbody rigidbody,Vector3 pos, Vector3 velocity, int steps)
-    {
-        Vector3[] results = new Vector3[steps];
-        
-        float timestep = Time.fixedDeltaTime / Physics2D.velocityIterations;
-
-        float drag = 1f - timestep * rigidbody.drag;
-        Vector3 movestep = velocity * timestep;
-
-        for(int i = 0; i < steps; i++)
-        {
-            movestep *= drag;
-            pos += movestep;
-            results[i] = pos;
-
-        }
-        return results;
-    }
+   
 
 }
